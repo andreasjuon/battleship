@@ -1,0 +1,31 @@
+
+.shipList {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.gameboard {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  width: 500px;   /* optional */
+  height: 500px;  /* optional */
+  gap: 2px;       /* optional */
+}
+
+.cell {
+  background-color: #ddd;
+}
+
+.gameboard.player1 > .cell.ship {
+  background-color: black;
+}
+.cell.hit::after {
+  content: "X";
+}
+
+/*TEMP*/
+.gameboard.player2 > .cell.ship {
+  background-color: grey;
+}

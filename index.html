@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Andreas' Battleship Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="game.js" defer></script>
+</head>
+<body>
+
+    <dialog id="placeShips">
+        <p>Ready to place your ships?</p>
+        <button id="putShipsYourselfButton">Yes</button>
+        <button id="putShipsAutomaticallyButton">No, place automatically</button>
+    </dialog>
+
+    <main>
+
+        <h1>Battleship!</h1>
+
+        <div class="ships">
+            <div class="container">
+                <h2>Your ships:</h2>
+                <div class = "shipList player1"></div>
+            </div>
+            <div class="container">
+                <h2>Your opponent's ships:</h2>
+                <div class = "shipList player2"></div>
+            </div>
+        </div>
+
+        <div id="gameboards">
+
+            <div class ="container">
+                <h2>Your board:</h2>
+                <div class="gameboard player1"></div>
+            </div>
+
+            <div class ="container">
+                <h2>Your opponent's board:</h2>
+                <div class="gameboard player2"></div>
+            </div>
+        
+        </div>
+        
+        
+
+    </main>
+    
+</body>
+</html>
