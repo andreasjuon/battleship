@@ -15,11 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
   } = scanDom();
   const gameboards = [board1, board2];
 
-  // Visualize gameboards
+  // Populate visual gameboards with cells
   for (let i = 0; i < gameboards.length; i++) {
     for (let j = 0; j < 100; j++) {
-      gameboards[i].appendChild(document.createElement("div")).className =
-        "cell";
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.id = j;
+      gameboards[i].appendChild(cell);
     }
   }
 
@@ -37,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Submarine": 2,
     "Destroyer": 1,
   };
+  const shipEntries = Object.entries(ships);
 
   // Place opponent's ships
   randomPlaceShips({
@@ -50,10 +53,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Place own ships?
   dialog.showModal();
+
   putShipsYourselfButton.addEventListener("click", () => {
-    // TODO: implementation for user to choose ship and then choose vertical/horizontal and then choose position
+
     dialog.close();
-  })
+
+    let currentShipIndex = 0;
+
+    board1.addEventListener("click", (e) => {
+
+      const clicked = e.target;
+
+      // make sure the click target is one of the cells
+      if (!clicked.classList.contains("cell")) return;
+
+      const startCell = Number(clicked.id);
+      const [shipName, shipLength] = shipEntries[currentShipIndex];
+      const vertical = false;
+      const ship = new Ship(shipLength, vertical);
+
+      const placed = player1.board.placeShip(ship, startCell);
+
+      if (placed) {
+        console.log(`${shipName} placed!`);
+        visualizeBoard(board1, player1.board);
+
+        currentShipIndex++;
+
+        // All ships placed → remove listener
+        if (currentShipIndex >= shipEntries.length) {
+          board1.removeEventListener("click");
+          console.log("All ships placed!");
+        }
+      };
+    })
+  });
+
   putShipsAutomaticallyButton.addEventListener("click", () => {
     randomPlaceShips({
       playerName: "Player 1",
@@ -66,14 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     visualizeBoard(board1, player1.board);
     dialog.close();
   });
-
-
-    
-  // Create and (temporarily, for testing) populate their gameboards
-  //const player1Ship1 = new Ship(4, false);
-  //player1.board.placeShip(player1Ship1, 0);
-  //const player2Ship1 = new Ship(4, false);
-  //player2.board.placeShip(player2Ship1, 0);
 
   // Visualize the gameboards
   visualizeBoard(board1, player1.board);
