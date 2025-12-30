@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const gameboards = [board1, board2];
 
-  // Populate visual gameboards with cells
+  // Populate visual gameboards with cells; hover effect for board 1
   for (let i = 0; i < gameboards.length; i++) {
     for (let j = 0; j < 100; j++) {
       const cell = document.createElement("div");
@@ -36,22 +36,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // List of ships
   const ships = {
-    "Carrier": 5,
-    "Battleship": 4,
-    "Cruiser": 3,
-    "Submarine": 2,
-    "Destroyer": 1,
+    Carrier: 5,
+    Battleship: 4,
+    Cruiser: 3,
+    Submarine: 2,
+    Destroyer: 1,
   };
   const shipEntries = Object.entries(ships);
 
   // Place opponent's ships
   randomPlaceShips({
-    playerName: "Player 2", 
-    board: player2.board, 
+    playerName: "Player 2",
+    board: player2.board,
     listOfShipTypesObject: ships,
     randomFn: Math.random,
     logFn: console.log,
-    maxAttempts: 100
+    maxAttempts: 100,
   });
 
   // Place own ships?
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("placingShipsP:", placingShipsP);
 
   // Show placing ships message and option to pick vertical
-  placingShipsP.style.display = "block";
+  placingShipsP.style.display = "flex";
   let vertical = false;
   verticalCheck.addEventListener("change", () => {
     if (verticalCheck.checked) {
@@ -72,16 +72,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   putShipsYourselfButton.addEventListener("click", () => {
-
     dialog.close();
+    placingShipsP.style.display = "flex";
 
     let currentShipIndex = 0;
 
-    board1.addEventListener("click", (e) => {
-
+    // Define the handler function
+    const handleBoardClick = (e) => {
       const clicked = e.target;
 
-      // make sure the click target is one of the cells
       if (!clicked.classList.contains("cell")) return;
 
       const startCell = Number(clicked.id);
@@ -96,14 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentShipIndex++;
 
-        // All ships placed → remove listener
         if (currentShipIndex >= shipEntries.length) {
-          board1.removeEventListener("click");
+          board1.removeEventListener("click", handleBoardClick); // <-- works now
           console.log("All ships placed!");
         }
-      };
-    })
+      }
+    };
+
+    // Add the listener
+    board1.addEventListener("click", handleBoardClick);
   });
+
+  placingShipsP.style.display = "none";
 
   putShipsAutomaticallyButton.addEventListener("click", () => {
     randomPlaceShips({
@@ -118,7 +121,96 @@ document.addEventListener("DOMContentLoaded", () => {
     dialog.close();
   });
 
-  // Visualize the gameboards
   visualizeBoard(board1, player1.board);
   visualizeBoard(board2, player2.board);
-});
+
+  // Define the handler for attack try function
+  function attack({ attacker, defender, defenderBoardEl, cellIndex }) {
+    const result = defender.board.receiveAttack(cellIndex);
+
+    // Already hit → invalid attack
+    if (result === undefined) {
+      console.log("Cell already hit — retry turn");
+      return { valid: false };
+    }
+
+    console.log(`${attacker.type} attacks cell ${cellIndex}`);
+
+    visualizeBoard(defenderBoardEl, defender.board);
+
+    const allSunk = defender.board.checkAllSunk();
+
+    return {
+      valid: true,
+      allSunk,
+      hit: result === true,
+    };
+  }
+
+  // turn control
+  let currentPlayer = player1; // human starts
+  let gameOver = false;
+
+  // human turn
+  const humanTurnHandler = (e) => {
+    if (gameOver) return;
+
+    const clicked = e.target;
+    if (!clicked.classList.contains("cell")) return;
+
+    const cellIndex = Number(clicked.id);
+
+    const result = attack({
+      attacker: player1,
+      defender: player2,
+      defenderBoardEl: board2,
+      cellIndex,
+    });
+
+    // Invalid move → same player tries again
+    if (!result.valid) return;
+
+    if (result.allSunk) {
+      console.log("Human wins!");
+      gameOver = true;
+      board2.removeEventListener("click", humanTurnHandler);
+      return;
+    }
+
+    // Valid move → switch to computer
+    board2.removeEventListener("click", humanTurnHandler);
+    setTimeout(computerTurn, 600);
+  };
+
+  board2.addEventListener("click", humanTurnHandler);
+
+function computerTurn() {
+  if (gameOver) return;
+
+  let result;
+
+  do {
+    const cellIndex = Math.floor(Math.random() * 100);
+
+    result = attack({
+      attacker: player2,
+      defender: player1,
+      defenderBoardEl: board1,
+      cellIndex,
+    });
+  } while (!result.valid);
+
+  if (result.allSunk) {
+    console.log("Computer wins!");
+    gameOver = true;
+    return;
+  }
+
+  // Back to human
+  board2.addEventListener("click", humanTurnHandler);
+}
+
+})
+
+
+

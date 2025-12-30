@@ -184,4 +184,24 @@ function randomPlaceShips({
   return placedShips; // returns useful info for testing
 }
 
-export { Ship, Gameboard, Player, randomPlaceShips };
+function randomAttack({
+  board,
+  randomFn = Math.random, // injectable for tests
+  logFn = () => {}, // injectable logger
+  maxAttempts = 100,
+}) {
+
+  let attacked = undefined;
+  let attempts = 0;
+
+  while (attacked === undefined && attempts < maxAttempts) {
+
+    const attackCell = Math.floor(randomFn() * board.sideLength ** 2);
+
+    attacked = board.receiveAttack(attackCell);
+    attempts++;
+  }
+
+}
+
+export { Ship, Gameboard, Player, randomPlaceShips, randomAttack };

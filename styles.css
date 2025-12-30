@@ -18,6 +18,10 @@
   background-color: #ddd;
 }
 
+.cell:hover {
+  background-color: bisque;
+}
+
 .gameboard.player1 > .cell.ship {
   background-color: black;
 }
@@ -28,4 +32,18 @@
 /*TEMP*/
 .gameboard.player2 > .cell.ship {
   background-color: grey;
+}
+
+#placingShipsP {
+  display: flex;
+  flex-direction: row;      /* horizontal row */
+  align-items: center;      /* vertical centering */
+  gap: 50px;                /* spacing between items */
+  background-color: red;
+  color: white;
+  padding: 5px;
+}
+
+#placingShipsP > p {
+  margin: 0;               /* remove default top/bottom margin */
 }
