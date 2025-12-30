@@ -10,9 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
     board1,
     board2,
     dialog,
+    placingShipsP,
+    verticalCheck,
     putShipsYourselfButton,
-    putShipsAutomaticallyButton
+    putShipsAutomaticallyButton,
   } = scanDom();
+
   const gameboards = [board1, board2];
 
   // Populate visual gameboards with cells
@@ -53,6 +56,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Place own ships?
   dialog.showModal();
+  console.log("placingShipsP:", placingShipsP);
+
+  // Show placing ships message and option to pick vertical
+  placingShipsP.style.display = "block";
+  let vertical = false;
+  verticalCheck.addEventListener("change", () => {
+    if (verticalCheck.checked) {
+      vertical = true;
+      console.log("Placing ship vertically");
+    } else {
+      vertical = false;
+      console.log("Placing ship horizontally");
+    }
+  });
 
   putShipsYourselfButton.addEventListener("click", () => {
 
@@ -69,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const startCell = Number(clicked.id);
       const [shipName, shipLength] = shipEntries[currentShipIndex];
-      const vertical = false;
       const ship = new Ship(shipLength, vertical);
 
       const placed = player1.board.placeShip(ship, startCell);

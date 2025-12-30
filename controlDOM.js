@@ -3,9 +3,19 @@ function scanDom() {
     const board1 = document.querySelector(".gameboard.player1");
     const board2 = document.querySelector(".gameboard.player2");
     const dialog = document.getElementById("placeShips");
+    const placingShipsP = document.querySelector("#placingShipsP");
+    const verticalCheck = document.querySelector("#verticalCheck");
     const putShipsYourselfButton = document.querySelector("#putShipsYourselfButton");
     const putShipsAutomaticallyButton = document.querySelector("#putShipsAutomaticallyButton");
-    return { board1, board2, dialog, putShipsYourselfButton, putShipsAutomaticallyButton };
+    return {
+      board1,
+      board2,
+      dialog,
+      placingShipsP,
+      verticalCheck,
+      putShipsYourselfButton,
+      putShipsAutomaticallyButton,
+    };
 }
 
 function visualizeBoard(visualBoard, gameBoard) {
